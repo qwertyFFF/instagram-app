@@ -10,7 +10,7 @@
 
 ### Para fazer reload na aplicação:
 
-`adb shell`
+`adb shell input text "RR"`
 
 ### Para iniciar a aplicação já instalado no dispositivo:
 
