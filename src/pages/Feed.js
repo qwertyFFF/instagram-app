@@ -6,7 +6,9 @@ import {
   TouchableOpacity,
   FlatList,
   Text,
-  StyleSheet
+  StyleSheet,
+  ScrollView,
+  RefreshControl
 } from "react-native";
 import camera from "../assets/camera.png";
 import more from "../assets/more.png";
@@ -28,15 +30,21 @@ export default class Feed extends Component {
   });
 
   state = {
-    feed: []
+    feed: [],
+    refreshing: false
+  };
+
+  _onRefresh = () => {
+    this.setState({ refreshing: true });
+    fetch("https://instagram-backend-api.herokuapp.com/posts").then(() => {
+      this.setState({ refreshing: false });
+    });
   };
 
   async componentDidMount() {
     this.registerToSocket();
 
     const response = await api.get("posts");
-
-    console.log(response.data);
 
     this.setState({ feed: response.data });
   }
@@ -63,7 +71,15 @@ export default class Feed extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh}
+          />
+        }
+      >
         <FlatList
           data={this.state.feed}
           keyExtractor={post => post._id}
@@ -110,7 +126,7 @@ export default class Feed extends Component {
             </View>
           )}
         />
-      </View>
+      </ScrollView>
     );
   }
 }
