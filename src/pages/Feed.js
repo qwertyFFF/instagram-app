@@ -18,6 +18,15 @@ import send from "../assets/send.png";
 import api from "../services/api";
 
 export default class Feed extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      feed: [],
+      refreshing: false
+    };
+  }
+
   static navigationOptions = ({ navigation }) => ({
     headerRight: (
       <TouchableOpacity
@@ -29,12 +38,7 @@ export default class Feed extends Component {
     )
   });
 
-  state = {
-    feed: [],
-    refreshing: false
-  };
-
-  _onRefresh = () => {
+  handleRefresh = () => {
     this.setState({ refreshing: true });
     fetch("https://instagram-backend-api.herokuapp.com/posts").then(() => {
       this.setState({ refreshing: false });
@@ -76,7 +80,7 @@ export default class Feed extends Component {
         refreshControl={
           <RefreshControl
             refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh}
+            onRefresh={this.handleRefresh}
           />
         }
       >
